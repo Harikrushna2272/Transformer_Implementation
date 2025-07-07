@@ -39,11 +39,12 @@ class InputEmbeddings(nn.Module):
         super().__init__()
         self.d_model = d_model
         self.vocab_size = vocab_size
-        self.embedding = nn.Embedding(vocab_size, d_model)
+        self.embedding = nn.Embedding(vocab_size, d_model) # each token converted into the hidden_dim which represent it as word for the language model
 
     def forward(self, x):
         # (batch, seq_len) --> (batch, seq_len, d_model)
         # Multiply by sqrt(d_model) to scale the embeddings according to the paper
+        # Without scaling, the magnitude of embeddings might be small compared to positional encodings or other layers Scaling stabilizes gradients Keeps model outputs numerically balanced
         return self.embedding(x) * math.sqrt(self.d_model)
     
 class PositionalEncoding(nn.Module):
@@ -81,6 +82,7 @@ class ResidualConnection(nn.Module):
     
         def forward(self, x, sublayer):
             return x + self.dropout(sublayer(self.norm(x)))
+            # sublayer can be : Self-Attention Layer, Feed Forward Layer, Any function that processes tokens
 
 class MultiHeadAttentionBlock(nn.Module):
 
