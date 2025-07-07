@@ -7,12 +7,14 @@ class LayerNormalization(nn.Module):
     def __init__(self, features: int, eps:float=10**-6) -> None:
         super().__init__()
         self.eps = eps
+        # nn.Parameters means can be changed during the backprop.
         self.alpha = nn.Parameter(torch.ones(features)) # alpha is a learnable parameter
         self.bias = nn.Parameter(torch.zeros(features)) # bias is a learnable parameter
 
     def forward(self, x):
         # x: (batch, seq_len, hidden_size)
-         # Keep the dimension for broadcasting
+        # Broadcast-Compatible Dimensions for that means last dimention should be same or one of them should be one for that.
+        # for tensor operation between means and x or std and x.
         mean = x.mean(dim = -1, keepdim = True) # (batch, seq_len, 1)
         # Keep the dimension for broadcasting
         std = x.std(dim = -1, keepdim = True) # (batch, seq_len, 1)
