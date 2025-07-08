@@ -43,7 +43,7 @@ class InputEmbeddings(nn.Module):
 
     def forward(self, x):
         # (batch, seq_len) --> (batch, seq_len, d_model)
-        # Multiply by sqrt(d_model) to scale the embeddings according to the paper
+        # Multiply by sqrt(d_model) to scale the embeddings.
         # Without scaling, the magnitude of embeddings might be small compared to positional encodings or other layers Scaling stabilizes gradients Keeps model outputs numerically balanced
         return self.embedding(x) * math.sqrt(self.d_model)
     
@@ -97,7 +97,7 @@ class MultiHeadAttentionBlock(nn.Module):
         self.w_q = nn.Linear(d_model, d_model, bias=False) # Wq
         self.w_k = nn.Linear(d_model, d_model, bias=False) # Wk
         self.w_v = nn.Linear(d_model, d_model, bias=False) # Wv
-        self.w_o = nn.Linear(d_model, d_model, bias=False) # Wo
+        self.w_o = nn.Linear(d_model, d_model, bias=False) # Wo is the final linear layer applied after combining all attention heads.
         self.dropout = nn.Dropout(dropout)
 
     @staticmethod
@@ -250,7 +250,7 @@ def build_transformer(src_vocab_size: int, tgt_vocab_size: int, src_seq_len: int
         decoder_self_attention_block = MultiHeadAttentionBlock(d_model, h, dropout)
         decoder_cross_attention_block = MultiHeadAttentionBlock(d_model, h, dropout)
         feed_forward_block = FeedForwardBlock(d_model, d_ff, dropout)
-        decoder_block = DecoderBlock(d_model, decoder_self_attention_block, decoder_cross_attention_block, feed_forward_block, dropout)
+        decoder_block = DecoderBlock(d_model, decoder_ar, decoder_cross_attention_block, feed_forward_block, dropout)
         decoder_blocks.append(decoder_block)
     
     # Create the encoder and decoder
